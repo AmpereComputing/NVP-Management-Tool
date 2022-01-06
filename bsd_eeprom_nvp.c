@@ -383,7 +383,7 @@ int bsd_eeprom_handler (nvparm_ctrl_t *ctrl)
          * So dump data from offset 0x00
          */
         sz = eeprom_rd_wr(i2cdev, ctrl->slave_addr,
-                          0, (uint8_t *)&buff,
+                          0, buff,
                           header.length, EEPROM_RD_FLG);
         if (sz == -1 || sz != header.length) {
             log_printf(LOG_ERROR, "ERROR in read NVP blob\n");
@@ -437,7 +437,7 @@ int bsd_eeprom_handler (nvparm_ctrl_t *ctrl)
 
         /* The NVPBERLY file includes BSV data so offset is 0x00 */
         bytes = eeprom_rd_wr(i2cdev, ctrl->slave_addr,
-                          0, (uint8_t *)&buff,
+                          0, buff,
                           sz, EEPROM_WR_FLG);
         if (bytes == -1 || sz != bytes) {
             log_printf(LOG_ERROR, "ERROR in write new NVP blob\n");
