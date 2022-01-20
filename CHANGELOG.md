@@ -1,5 +1,11 @@
 # nvparm
 
+## [1.1.1] - 2022-01-20
+
+### Changed
+
+- Fix memory conversion in dump and upload NVP file
+
 ## [1.1.0] - 2021-12-27
 ### Added
 
