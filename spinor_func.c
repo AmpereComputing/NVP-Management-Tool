@@ -39,9 +39,9 @@ lfs_t lfs_flash;
 lfs_file_t file_flash;
 
 /* statically allocated read buffer */
-uint8_t lfs_read_buf[DEFAULT_SPI_PAGE_SIZE];
+uint8_t lfs_read_buf[DEFAULT_READ_PRO_SIZE];
 /* statically allocated program buffer */
-uint8_t lfs_prog_buf[DEFAULT_SPI_PAGE_SIZE];
+uint8_t lfs_prog_buf[DEFAULT_READ_PRO_SIZE];
 /* statically allocated lookahead buffer (track 128*8=1024 blocks) */
 uint8_t lfs_lookahead_buf[DEFAULT_LFS_LOOKAHEAD_SIZE];
 
@@ -485,11 +485,11 @@ int spinor_lfs_mount(uint32_t size, uint32_t offset)
     cfg_flash.erase = flash_erase_lfs;
     cfg_flash.sync  = flash_sync_lfs;
     // block device configuration
-    cfg_flash.read_size = DEFAULT_SPI_PAGE_SIZE; // SPI-NOR Page size
-    cfg_flash.prog_size = DEFAULT_SPI_PAGE_SIZE; // SPI-NOR Page size
+    cfg_flash.read_size = DEFAULT_READ_PRO_SIZE; // SPI-NOR Page size
+    cfg_flash.prog_size = DEFAULT_READ_PRO_SIZE; // SPI-NOR Page size
     cfg_flash.block_size = (lfs_size_t) mtd.erasesize;
     cfg_flash.block_count = (lfs_size_t) (lfs_part_size / mtd.erasesize);
-    cfg_flash.cache_size = DEFAULT_SPI_PAGE_SIZE; // Equal to read/pro size
+    cfg_flash.cache_size = DEFAULT_READ_PRO_SIZE; // Equal to read/pro size
     cfg_flash.lookahead_size = DEFAULT_LFS_LOOKAHEAD_SIZE;
     cfg_flash.block_cycles = DEFAULT_LFS_BLOCK_CYCLE;
     cfg_flash.read_buffer = lfs_read_buf;
@@ -791,6 +791,9 @@ int spinor_lfs_operate_field(nvparm_ctrl_t *ctrl)
         log_printf(LOG_DEBUG, " 0x%.2x", val_bit_arr[i]);
     }
     log_printf(LOG_DEBUG, "\n");
+    log_printf(LOG_DEBUG, "NVP HEADER:\n");
+    log_printf(LOG_DEBUG, "field_size: %d, flags:%d, count:%d, data_offset:%d\n",
+    header.field_size, header.flags, header.count, header.data_offset);
     #endif
 
     if (ctrl->options[OPTION_R]) {

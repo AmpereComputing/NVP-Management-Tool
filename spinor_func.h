@@ -21,10 +21,11 @@
 #define HOST_SPI_FLASH_MTD_NAME     "pnor"
 #define MTD_DEV_SIZE                20
 
-#define DEFAULT_SPI_PAGE_SIZE       256
-#define DEFAULT_LFS_BLOCK_CYCLE     100
+#define DEFAULT_SPI_PAGE_SIZE       4096
+#define DEFAULT_READ_PRO_SIZE       512
+#define DEFAULT_LFS_BLOCK_CYCLE     (-1)
 /* Purpose: block-level wear-leveling */
-#define DEFAULT_LFS_LOOKAHEAD_SIZE  128
+#define DEFAULT_LFS_LOOKAHEAD_SIZE  16
 
 extern int find_host_mtd_partition (int *fd);
 extern int spinor_lfs_mount (uint32_t size, uint32_t offset);
