@@ -1,5 +1,11 @@
 # nvparm
 
+## [1.1.2] - 2022-02-11
+
+### Changed
+
+- Update LFS configuration info
+
 ## [1.1.1] - 2022-01-20
 
 ### Changed
