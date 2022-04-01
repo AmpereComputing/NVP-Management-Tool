@@ -20,4 +20,4 @@
 // Patch: incremented on all other non-breaking changes
 #define NVPARM_VERSION_MAJOR 1
 #define NVPARM_VERSION_MINOR 1
-#define NVPARM_VERSION_PATCH 2
+#define NVPARM_VERSION_PATCH 4

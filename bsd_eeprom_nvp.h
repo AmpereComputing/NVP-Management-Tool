@@ -48,6 +48,14 @@ enum eeprom_type {
 #define DEFAULT_I2C_EEPROM_ADDR         0x50
 #define DEFAULT_I2C_EEPROM_TYPE         EEPROM_256B
 
+/**
+ * On AC03, the UART settings were added to the EEPROM NVPARAMs after the ROM
+ * was already taped out. This workaround forces the checksum calculation of
+ * this NVPARAM blob to exclude the additional bytes so both the ROM and FW
+ * are able to verify it.
+ **/
+#define BSD_WA_BYTES_TO_CHECKSUM           148
+
 extern int bsd_eeprom_handler (nvparm_ctrl_t *ctrl);
 
 #endif  /* _BSD_EEPROM_NVP_H_ */

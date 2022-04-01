@@ -1,13 +1,21 @@
 # nvparm
 
-## [1.1.2] - 2022-02-11
+## [1.1.4] - 2022-08-04
+### Changed
 
+- Support standalone version
+
+## [1.1.3] - 2022-04-01
+### Changed
+
+- Using hnor for Host SPINOR partition name instead of pnor
+
+## [1.1.2] - 2022-02-11
 ### Changed
 
 - Update LFS configuration info
 
 ## [1.1.1] - 2022-01-20
-
 ### Changed
 
 - Fix memory conversion in dump and upload NVP file
@@ -26,4 +34,3 @@
 - Dumping an NVP file into a binary file on BMC’s file system.
 - Write new content to an existing NVP file.
 - Printing GPT header.
-

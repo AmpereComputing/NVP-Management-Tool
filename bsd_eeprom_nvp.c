@@ -303,7 +303,7 @@ int bsd_eeprom_handler (nvparm_ctrl_t *ctrl)
     uint8_t val_bit_arr_sz = 0;
     uint8_t *data_cs = NULL;
     uint8_t need_update_cs = 0;
-    uint8_t checksum = 0;
+    uint8_t checksum = 0, checksum_wa = 0;
 
     if (strlen((char *)ctrl->nvp_file) > 0 &&
         strcmp((char *)ctrl->nvp_file, BSD_NVP_FILE) != 0) {
@@ -363,7 +363,13 @@ int bsd_eeprom_handler (nvparm_ctrl_t *ctrl)
     }
     checksum = calculate_sum8(data_cs, header.length);
     if (checksum != 0) {
-        log_printf(LOG_NORMAL, "WARN current checksum invalid\n");
+        /* Retry to apply the AC03 workaround for checksum */
+        checksum = calculate_sum8(data_cs, BSD_WA_BYTES_TO_CHECKSUM);
+        if (checksum != 0) {
+            log_printf(LOG_NORMAL, "WARN current checksum invalid\n");
+        } else {
+            checksum_wa = 1;
+        }
     }
 
     /* Dump the NVP blob */
@@ -617,7 +623,11 @@ int bsd_eeprom_handler (nvparm_ctrl_t *ctrl)
         }
         /* Reset checksum before calculate new value */
         data_cs[BSD_CHECKSUM_OFFSET] = 0;
-        checksum = calculate_sum8(data_cs, header.length);
+        if (checksum_wa == 1) {
+            checksum = calculate_sum8(data_cs, BSD_WA_BYTES_TO_CHECKSUM);
+        } else {
+            checksum = calculate_sum8(data_cs, header.length);
+        }
         /* Update new checksum */
         sz = eeprom_rd_wr(i2cdev, ctrl->slave_addr, BSD_CHECKSUM_OFFSET,
                           &checksum, sizeof(checksum), EEPROM_WR_FLG);
