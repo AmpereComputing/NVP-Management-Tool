@@ -18,7 +18,7 @@
 #include "utils.h"
 
 #define PROC_MTD_INFO               "/proc/mtd"
-#define HOST_SPI_FLASH_MTD_NAME     "pnor"
+#define HOST_SPI_FLASH_MTD_NAME     "hnor"
 #define MTD_DEV_SIZE                20
 
 #define DEFAULT_SPI_PAGE_SIZE       4096
