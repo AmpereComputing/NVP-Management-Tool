@@ -595,6 +595,97 @@ int spinor_lfs_file_write(lfs_t *lfs, lfs_file_t *file, lfs_off_t offset,
 }
 
 /**
+ * @fn spinorfs_read
+ *
+ * @brief Read size bytes of file into buffer. File should be opened
+ *        before reading.
+ * @param  file [IN] - file to be read from
+ * @param  buff [IN] - Target buffer stores the read file data
+ * @param  offset [IN] - File offset
+ * @param  size [IN] - Content size
+ * @return  0 - Success
+ *          1 - Failure
+ **/
+int spinorfs_read(char *file, char *buff, uint32_t offset, uint32_t size)
+{
+    int ret;
+    lfs_size_t byte_cnt = 0;
+
+    if (file == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    /* Open file as READ ONLY */
+    ret = lfs_file_open(&lfs_flash, &file_flash, file, LFS_O_RDONLY);
+    if (ret < 0) {
+        log_printf(LOG_ERROR, "ERROR %d in open file %s\n", ret, file);
+        return EXIT_FAILURE;
+    }
+
+    /* Seek file to offset */
+    if (lfs_file_seek(&lfs_flash, &file_flash, offset, LFS_SEEK_SET) != (lfs_soff_t)offset) {
+        log_printf(LOG_ERROR, "ERROR in seek to offset: 0x%.8x\n", offset);
+        return EXIT_FAILURE;
+    }
+
+    byte_cnt = lfs_file_read(&lfs_flash, &file_flash, buff, size);
+
+    lfs_file_close(&lfs_flash, &file_flash);
+
+    if (byte_cnt != size) {
+        log_printf(LOG_ERROR, "ERROR in read lfs file: %d\n", byte_cnt);
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
+}
+
+/**
+ * @fn spinorfs_write
+ *
+ * @brief Write data buffer into file.
+ * @param  file [IN] - file to be written to
+ * @param  buff [IN] - Target buffer stores the write file data
+ * @param  offset [IN] - File offset
+ * @param  size [IN] - Content size
+ * @return  0 - Success
+ *          1 - Failure
+ **/
+int spinorfs_write(char *file, char *buff, uint32_t offset, uint32_t size)
+{
+    int ret;
+    lfs_size_t byte_cnt = 0;
+
+    if (file == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    /* Open file as WRITE ONLY */
+    ret = lfs_file_open(&lfs_flash, &file_flash, file, LFS_O_WRONLY | LFS_O_TRUNC);
+    if (ret < 0) {
+        log_printf(LOG_ERROR, "ERROR %d in open file %s\n", ret, file);
+        return EXIT_FAILURE;
+    }
+
+    /* Seek file to offset */
+    if (lfs_file_seek(&lfs_flash, &file_flash, offset, LFS_SEEK_SET) != (lfs_soff_t)offset) {
+        log_printf(LOG_ERROR, "ERROR in seek to offset: 0x%.8x\n", offset);
+        return EXIT_FAILURE;
+    }
+
+    byte_cnt = lfs_file_write(&lfs_flash, &file_flash, buff, size);
+
+    lfs_file_close(&lfs_flash, &file_flash);
+
+    if (byte_cnt != size) {
+        log_printf(LOG_ERROR, "ERROR in write lfs file: %d\n", byte_cnt);
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+
+/**
  * @fn spinor_lfs_dump_nvp
  *
  * @brief Dump NVPARAM file into specific target file

@@ -1,4 +1,5 @@
 TARGET = nvparm
+TARGET_LIB = nvparm.a
 
 GCC = $(CROSS_COMPILE)gcc
 STRIP =$(CROSS_COMPILE)strip
@@ -32,7 +33,7 @@ override CFLAGS += --sysroot=$(SYSROOT)
 endif
 endif
 
-all: $(TARGET)
+all: $(TARGET) $(TARGET_LIB)
 
 -include $(DEP)
 
@@ -47,6 +48,9 @@ endif
 
 %.o: %.c
 	$(GCC) -c -MMD $(CFLAGS) $< -o $@
+
+$(TARGET_LIB): $(OBJ)
+	$(AR) rcs $@ $^
 
 clean:
 	rm -f $(TARGET)

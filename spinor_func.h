@@ -33,5 +33,7 @@ extern int spinor_lfs_unmount(void);
 extern int spinor_lfs_dump_nvp(char *nvp_file, char *dump_file);
 extern int spinor_lfs_upload_nvp(char *nvp_file, char *upload_file);
 extern int spinor_lfs_operate_field(nvparm_ctrl_t *ctrl);
+extern int spinorfs_read(char *file, char *buff, uint32_t offset, uint32_t size);
+extern int spinorfs_write(char *file, char *buff, uint32_t offset, uint32_t size);
 
 #endif  /* _SPINOR_FUNC_H_ */
