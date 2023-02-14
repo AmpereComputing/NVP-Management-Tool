@@ -1,0 +1,82 @@
+                            Ampere Computing
+                          NVPARM Tool Changelog
+                      (support@amperecomputing.com)
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+                                 CONTENTS
+Topic                            --------                       Section
+-----                                                           -------
+
+ o SUMMARY OF CHANGES ............................................ 1.0
+ o COPYRIGHT ..................................................... 2.0
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+1.0 SUMMARY OF CHANGES
+===========================================================================
+Version 1.1.5 - 2023-02-14
+
+--------------------------
+What's new in this version
+--------------------------
+
+- Fix BSD cheksum invalid issue for AC03
+- Fix memory leak with option -o
+
+===========================================================================
+Version 1.1.3 - 2022-04-01
+
+--------------------------
+What's new in this version
+--------------------------
+    * Using hnor for Host SPINOR partition name instead of pnor
+
+===========================================================================
+Version 1.1.2 - 2022-02-11
+
+--------------------------
+What's new in this version
+--------------------------
+    * Update LFS configuration info
+
+===========================================================================
+Version 1.1.1 - 2022-01-20
+
+--------------------------
+What's new in this version
+--------------------------
+    * Fix memory conversion in dump and upload NVP file
+
+===========================================================================
+Version 1.1.0 - 2021-12-27
+
+--------------------------
+What's new in this version
+--------------------------
+    * Support to Read/Write Static NVPARAM
+    * Upgrade LittleFS version to 2.4.1
+    * Read an NVPARAM field individually and its associated valid bit
+      from an NVP file of Dynamic or Validation NVPARAM or BSD partitions.
+    * Write NVPARAM data to a field individually in a NVP file of Dynamic or
+      Validation NVPARAM or BSD partitions.
+    * Enable or disable the valid bit of an NVPARAM field in an NPV file.
+    * Erase an NVPARAM field in an NVP file.
+    * Dumping an NVP file into a binary file on BMC’s file system.
+    * Write new content to an existing NVP file.
+    * Printing GPT header.
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+# 2.0 COPYRIGHT
+
+    Copyright (c) 2022, Ampere Computing LLC
+    All Rights Reserved.
+
+    Ampere Computing CONFIDENTIAL - This is an unpublished, proprietary
+    work of Ampere Computing, and is fully protected under
+    copyright and trade secret laws. You may not view, use, disclose,
+    copy or distribute this file or any information contained herein
+    except pursuant to a valid written license from Ampere Computing.
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=

@@ -1,0 +1,30 @@
+Copyright (c) 2022, Ampere Computing LLC
+Ampere Computing LLC Proprietary and Confidential
+
+Ampere Computing LLC (“Ampere”) provides the software in this directory and any subdirectories (“Software”) to
+you under a non-exclusive, non-sublicensable, non-transferable license to use the Software solely for your own
+internal evaluation purposes and only in conjunction with Ampere Systems-on-Chip. Any other use or distribution
+is prohibited, absent a separate software license agreement between you and Ampere which specifically identifies
+this Software. Use of this Software is subject to the terms of any Non-Disclosure Agreement between Ampere and
+you. This license may be terminated at any time for any reason by Ampere by providing written notice to you
+(which may include e-mail) of the termination of this license, and absent such termination, this license shall
+terminate on 03/01/2022 or thirty (30) days from the date you received the Software, whichever is sooner.
+Upon any termination of this license, all Software (whether in source, object, and/or binary form) subject to this
+license shall be deleted by you, and you shall provide certification of such deletion upon written request from Ampere.
+
+Notwithstanding the terms of any multi-party NDA between you, Ampere, and any third party, or any other agreement
+between you and Ampere, this Software may not be shared with any third party by you without Ampere's express written
+consent from an Ampere Vice President or above which specifically identifies this Software. If you have received this
+Software from someone other than Ampere, please notify Ampere at developer@amperecomputing.com of the circumstances,
+and either do not install the Software, or delete the Software if you have already installed it, unless otherwise
+directed by Ampere in writing.
+
+THIS SOFTWARE IS PROVIDED BY AMPERE “AS-IS,” AND AMPERE MAKES NO WARRANTIES REGARDING THE SOFTWARE. AMPERE EXPRESSLY
+DISCLAIMS ANY AND ALL OTHER WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT,
+FITNESS FOR A PARTICULAR PURPOSE, OR OF TITLE. AMPERE SHALL HAVE NO LIABILITY FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, LOST PROFITS), HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+WAY OUT OF THE USE OR DISTRIBUTION OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. AMPERE MAKES NO
+WARRANTY OF ANY KIND THAT THE SOFTWARE, OR ANY PRODUCTS OR RESULTS OF THE USE THEREOF, WILL MEET YOUR OR ANY OTHER PERSON’S
+REQUIREMENTS, OPERATE WITHOUT INTERRUPTION, ACHIEVE ANY INTENDED RESULT, BE COMPATIBLE OR WORK WITH ANY SOFTWARE, SYSTEM
+OR OTHER SERVICES, OR BE SECURE, ACCURATE, COMPLETE, FREE OF HARMFUL CODE, OR ERROR FREE.

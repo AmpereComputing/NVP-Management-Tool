@@ -39,8 +39,10 @@ all: $(TARGET)
 $(TARGET): $(OBJ)
 	$(GCC) $(CFLAGS) $^ $(LFLAGS) -o $@
 ifndef DEBUG
+ifndef UNSTRIPPED
 	@echo "  STRIP   $@"
 	$(STRIP) $@
+endif
 endif
 
 %.o: %.c
