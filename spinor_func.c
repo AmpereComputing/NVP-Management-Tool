@@ -653,7 +653,7 @@ int spinor_lfs_upload_nvp(char *nvp_file, char *upload_file)
     FILE *fp = NULL;
     int byte_cnt = 0;
     ssize_t sz, bytes, count = 0;
-    uint8_t *buf;
+    uint8_t *buf = NULL;
 
     if (nvp_file == NULL || upload_file == NULL) {
         return EXIT_FAILURE;
@@ -711,6 +711,8 @@ loop:
         fclose(fp);
 out_lfs_open:
     lfs_file_close(&lfs_flash, &file_flash);
+    if (buf)
+        free(buf);
 out_upload:
     return ret;
 }
