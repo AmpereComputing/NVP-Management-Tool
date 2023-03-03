@@ -37,7 +37,7 @@
 #include "spinor_nvp.h"
 
 /* Option string of this application */
-#define OPTION_STRING   "t:u:f:i:rew:v:d:b:s:o:phV"
+#define OPTION_STRING   "t:u:f:i:rew:v:d:b:s:o:D:phV"
 
 static nvparm_ctrl_t nvparm_ctrl = { 0 };
 
@@ -72,6 +72,7 @@ static void help (void)
         "  -s <slave_addr>  : The slave address of the EEPROM. Default is 0x50.\n"
         "  -p               : Print GPT header. NVP partition names and GUIDs will be displayed.\n"
         "  -V               : Show version information.\n"
+        "  -D <device>      : The MTD partition path\n"
         "  -h               : Print this help.\n"
     );
 }
@@ -99,6 +100,7 @@ static int parse_opt (int argc, char** argv)
     char *input_i2c_bus = NULL;
     char *input_slave = NULL;
     char *endptr = NULL; // Store the location where conversion stopped
+    char *device_name= NULL;
 
     unsigned long input = ULONG_MAX;
     unsigned long long input_ll = ULLONG_MAX;
@@ -389,6 +391,26 @@ static int parse_opt (int argc, char** argv)
                         sizeof(nvparm_ctrl.upload_file));
             }
             break;
+        case 'D':
+            nvparm_ctrl.options[OPTION_DEV] = 1;
+            if (device_name != NULL) {
+                free(device_name);
+                device_name = NULL;
+            }
+            device_name = strdup(optarg);
+            if (device_name == NULL) {
+                log_printf(LOG_ERROR, "Option -D: malloc failure\n");
+                ret = EXIT_FAILURE;
+            } else if (strlen(device_name) >= MAX_NAME_LENGTH) {
+                log_printf(LOG_ERROR, "Device name is too long."
+                                      " Allow less than %d characters\n",
+                                      MAX_NAME_LENGTH);
+                ret = EXIT_FAILURE;
+            } else {
+                strncpy((char *)nvparm_ctrl.device_name, device_name,
+                        sizeof(nvparm_ctrl.device_name));
+            }
+            break;
         default:
             help();
             break;
@@ -435,6 +457,10 @@ static int parse_opt (int argc, char** argv)
         free(input_slave);
         input_slave = NULL;
     }
+    if (device_name) {
+        free(device_name);
+        device_name= NULL;
+    }
     return ret;
 }
 
@@ -467,6 +493,11 @@ static int verify_opt (void)
             ret = EXIT_FAILURE;
             log_printf(LOG_ERROR,
                        "Option -p, -h and -V can't be mixed together.\n");
+        } else if ((ctrl->options[OPTION_H] || ctrl->options[OPTION_VER]) &&
+                  ctrl->options[OPTION_DEV]) {
+            ret = EXIT_FAILURE;
+            log_printf(LOG_ERROR,
+                       "Option -h or -V can't mix with -D option.\n");
         }
         goto exit_verify;
     }
@@ -549,6 +580,10 @@ static int verify_opt (void)
             log_printf(LOG_ERROR,
                     "Options -r, -e, -w/-v, -d, -o can't be mixed together.\n"
                     "Except: -w and -v option can be mixed together\n.");
+            ret = EXIT_FAILURE;
+            goto exit_verify;
+        } else if (ctrl->options[OPTION_DEV]) {
+            log_printf(LOG_ERROR, "Can't use -D option for this case\n");
             ret = EXIT_FAILURE;
             goto exit_verify;
         }

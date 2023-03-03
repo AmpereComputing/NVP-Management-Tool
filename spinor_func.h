@@ -27,7 +27,7 @@
 /* Purpose: block-level wear-leveling */
 #define DEFAULT_LFS_LOOKAHEAD_SIZE  16
 
-extern int find_host_mtd_partition (int *fd);
+extern int find_host_mtd_partition (nvparm_ctrl_t *ctrl, int *fd);
 extern int spinor_lfs_mount (uint32_t size, uint32_t offset);
 extern int spinor_lfs_unmount(void);
 extern int spinor_lfs_dump_nvp(char *nvp_file, char *dump_file);

@@ -250,11 +250,12 @@ out:
  * @fn find_host_mtd_partition
  *
  * @brief Detect the Host MTD partition
+ * @param  ctrl [IN] - Input control structure
  * @param  fd [OUT] - Device file descriptor output
  * @return  0 - Success
  *          1 - Failure
  **/
-int find_host_mtd_partition (int *fd)
+int find_host_mtd_partition (nvparm_ctrl_t *ctrl, int *fd)
 {
     int ret = EXIT_SUCCESS;
     int nMTDDeviceNumber= -1;
@@ -262,6 +263,10 @@ int find_host_mtd_partition (int *fd)
     char temp_mtd[4] = {0}, *temp;
     char proc_buf[80];
 
+    if (ctrl->options[OPTION_DEV]) {
+        strncpy(&mtd_dev[0], ctrl->device_name, sizeof(mtd_dev));
+        goto open_dev;
+    }
     /* Finding the MTD partition for host SPI chip */
     FILE *proc_fp;
     if ((proc_fp = fopen(PROC_MTD_INFO, "r")) == NULL) {
@@ -299,6 +304,7 @@ int find_host_mtd_partition (int *fd)
         goto out;
     }
 
+open_dev:
     argv_dev_ptr = &mtd_dev[0];
 
     dev_fd  = flash_open(argv_dev_ptr, O_SYNC | O_RDWR);
@@ -310,6 +316,7 @@ int find_host_mtd_partition (int *fd)
     /* Get the MTD device info */
     ret = ioctl(dev_fd, MEMGETINFO, &mtd);
     if (ret < 0) {
+        close(dev_fd);
         ret = EXIT_FAILURE;
         goto out;
     }

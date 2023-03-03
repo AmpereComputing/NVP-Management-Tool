@@ -80,6 +80,7 @@ enum {
     OPTION_H,
     OPTION_VER,
     OPTION_O,
+    OPTION_DEV,
     MAX_OPTIONS
 };
 
@@ -122,6 +123,7 @@ struct nvp_header {
 
 typedef struct nvparm_ctrl {
     uint8_t device;
+    char device_name[MAX_NAME_LENGTH];
     uint8_t options[MAX_OPTIONS];
     char nvp_part[MAX_PART_NAME_LEN];
     uint8_t nvp_guid[GUID_BYTE_SIZE];

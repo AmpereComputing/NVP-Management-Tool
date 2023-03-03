@@ -43,7 +43,7 @@ int spinor_handler (nvparm_ctrl_t *ctrl)
     int dev_fd = -1;
 
     /* Finding the MTD partition for host SPI chip */
-    ret = find_host_mtd_partition(&dev_fd);
+    ret = find_host_mtd_partition(ctrl, &dev_fd);
     if (ret != EXIT_SUCCESS) {
         return ret;
     }
