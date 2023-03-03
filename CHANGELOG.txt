@@ -15,14 +15,23 @@ Topic                            --------                       Section
 
 1.0 SUMMARY OF CHANGES
 ===========================================================================
+Version 1.2.0 - 2023-03-03
+
+--------------------------
+What's new in this version
+--------------------------
+
+    * Support option "-D <device>" to specify MTD partition
+
+===========================================================================
 Version 1.1.5 - 2023-02-14
 
 --------------------------
 What's new in this version
 --------------------------
 
-- Fix BSD cheksum invalid issue for AC03
-- Fix memory leak with option -o
+    * Fix BSD cheksum invalid issue for AC03
+    * Fix memory leak with option -o
 
 ===========================================================================
 Version 1.1.3 - 2022-04-01
