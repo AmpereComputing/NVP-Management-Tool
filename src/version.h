@@ -18,5 +18,5 @@
 // Minor: incremented on new non-breaking features
 // Patch: incremented on all other non-breaking changes
 #define NVPARM_VERSION_MAJOR 1
-#define NVPARM_VERSION_MINOR 2
+#define NVPARM_VERSION_MINOR 3
 #define NVPARM_VERSION_PATCH 0
