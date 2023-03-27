@@ -1,0 +1,6 @@
+The nvparm binaries and sources are licensed and distributed under the terms of the BSD-3 license
+found in the LICENSE file at the root directory of this distribution.
+
+Binary versions of the nvparm tool contain littlefs, which is licensed under the terms of BSD-3.
+The sources for littelfs are pulled from https://github.com/littlefs-project/littlefs, license terms
+for littlefs can be found at https://github.com/littlefs-project/littlefs/blob/master/LICENSE.md.

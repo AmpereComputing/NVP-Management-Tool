@@ -1,14 +1,13 @@
 /**
  *
- * Copyright (c) 2021, Ampere Computing LLC
+ * Copyright (c) 2023, Ampere Computing LLC
  *
- *  This program and the accompanying materials
- *  are licensed and made available under the terms and conditions of the BSD License
- *  which accompanies this distribution.  The full text of the license may be found at
- *  http://opensource.org/licenses/bsd-license.php
+ * This program and the accompanying materials are licensed and made available under the terms
+ * and conditions of the BSD-3-Clause License which accompanies this distribution. The full text of the
+ * license may be found within the LICENSE file at the root of this distribution or online at
+ * https://opensource.org/license/bsd-3-clause/
  *
- *  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+ * SPDX-License-Identifier: BSD-3-Clause
  *
  **/
 
@@ -77,17 +76,17 @@ static int open_i2c_dev(char *i2c_device)
 }
 
 /**
- * @fn i2c_master_write
+ * @fn i2c_controller_write
  *
  * @brief Write data to I2C device.
  * @param  i2c_device [IN] - I2C Device path
- * @param  slave [IN] - EEPROM slave address
+ * @param  target [IN] - EEPROM target address
  * @param  data [IN] - Data buffer to write to device
  * @param  count [IN] - Number of data in byte
  * @return  0 - Success
  *          1 - Failure
  **/
-static int i2c_master_write(char *i2c_dev, uint8_t slave,
+static int i2c_controller_write(char *i2c_dev, uint8_t target,
                             uint8_t *data, size_t count)
 {
     int ret = EXIT_SUCCESS;
@@ -97,7 +96,7 @@ static int i2c_master_write(char *i2c_dev, uint8_t slave,
     if (fd < 0)
         return EXIT_FAILURE;
 
-    if (ioctl(fd, I2C_SLAVE, slave) < 0) {
+    if (ioctl(fd, I2C_SLAVE, target) < 0) {
         close(fd);
         ret = EXIT_FAILURE;
         return ret;
@@ -114,18 +113,18 @@ static int i2c_master_write(char *i2c_dev, uint8_t slave,
 }
 
 /**
- * @fn i2c_master_read
+ * @fn i2c_controller_read
  *
  * @brief Read data from I2C device.
  * @param  i2c_device [IN] - I2C Device path
- * @param  slave [IN] - EEPROM slave address
+ * @param  target [IN] - EEPROM target address
  * @param  wr_data [IN] - Data to write to device
  * @param  data [OUT] - Data buffer to read from device
  * @param  data_len [IN] - Number of data in byte
  * @return  0 - Success
  *          1 - Failure
  **/
-static int i2c_master_read(char *i2c_dev, uint8_t slave, uint8_t *wr_data,
+static int i2c_controller_read(char *i2c_dev, uint8_t target, uint8_t *wr_data,
                            uint8_t *data, size_t data_len)
 {
     int ret = EXIT_SUCCESS;
@@ -148,19 +147,19 @@ static int i2c_master_read(char *i2c_dev, uint8_t slave, uint8_t *wr_data,
     ioctl_data.nmsgs = 2;
     ioctl_data.msgs = i2c_msgs;
     ioctl_data.msgs[0].len = MAX_EEPROM_ADDR_LEN;
-    ioctl_data.msgs[0].addr = slave;
+    ioctl_data.msgs[0].addr = target;
     ioctl_data.msgs[0].flags = 0;
     ioctl_data.msgs[0].buf = wr_data;
 
     /* Read operation */
     ioctl_data.msgs[1].len = data_len;
-    ioctl_data.msgs[1].addr = slave;
+    ioctl_data.msgs[1].addr = target;
     ioctl_data.msgs[1].flags = I2C_M_RD | I2C_M_NOSTART;
     ioctl_data.msgs[1].buf = data;
 
     if (ioctl(fd, I2C_RDWR, &ioctl_data) < 0) {
         log_printf(LOG_ERROR,
-                   "Failed to read data from EEPROM @0x%x via i2c!\n", slave);
+                   "Failed to read data from EEPROM @0x%x via i2c!\n", target);
         ret = EXIT_FAILURE;
     }
     close(fd);
@@ -173,16 +172,16 @@ static int i2c_master_read(char *i2c_dev, uint8_t slave, uint8_t *wr_data,
  *
  * @brief Detect the EEPROM device.
  * @param  i2c_device [IN] - I2C Device path
- * @param  slave [IN] - EEPROM slave address
+ * @param  target [IN] - EEPROM target address
  * @return  0 - Success
  *          1 - Failure
  **/
-static int detect_eeprom(char *i2c_dev, uint8_t slave)
+static int detect_eeprom(char *i2c_dev, uint8_t target)
 {
     uint8_t buff[1];
     int ret = EXIT_SUCCESS;
 
-    ret = i2c_master_write(i2c_dev, slave, buff, 0);
+    ret = i2c_controller_write(i2c_dev, target, buff, 0);
     if (ret < 0)
         ret = EXIT_FAILURE;
     return ret;
@@ -193,14 +192,14 @@ static int detect_eeprom(char *i2c_dev, uint8_t slave)
  *
  * @brief Read/write data from/to EEPROM device.
  * @param  i2c_device [IN] - I2C Device path
- * @param  slave [IN] - EEPROM slave address
+ * @param  target [IN] - EEPROM target address
  * @param  offset [IN] - The offset to read/write data
  * @param  buf [OUT/IN] - Data buffer for read/write data
  * @param  size [IN] - Size of data to read/write
  * @param  wr_flag [IN] - Option to select read or write operation
  * @return  Size of read/written data. Error return -1
  **/
-static ssize_t eeprom_rd_wr(char *i2c_dev, uint8_t slave,
+static ssize_t eeprom_rd_wr(char *i2c_dev, uint8_t target,
                             uint32_t offset, uint8_t *buf,
                             ssize_t size, uint8_t rw_flag)
 {
@@ -227,8 +226,8 @@ loop:
     buf_off = 0;
 
     /**
-     * The slave I2C EEPROM bus addresses start from 0x50 upto 0x53.
-     * Each I2C slave can address a range of 64KB.
+     * The target I2C EEPROM bus addresses start from 0x50 upto 0x53.
+     * Each I2C target can address a range of 64KB.
      * Readjust the offset to address a total of 256KB eeprom memory.
      **/
     if (off >= 0x30000) {
@@ -240,7 +239,7 @@ loop:
     } else {
         off_tmp = (uint16_t)off;
     }
-    slave = slave + off / 0x10000;
+    target = target + off / 0x10000;
 
     /* EEPROM offset address */
     if (pagesize == EEPROM_256B_PAGE_SIZE ||
@@ -257,7 +256,7 @@ loop:
         bytes = len;
     if (rw_flag == EEPROM_WR_FLG) {
         memcpy(&wr_buf[buf_off], p, bytes);
-        ret = i2c_master_write(i2c_dev, slave, wr_buf, bytes + buf_off);
+        ret = i2c_controller_write(i2c_dev, target, wr_buf, bytes + buf_off);
         if (ret == EXIT_FAILURE) {
             log_printf(LOG_ERROR, "Fail to send wr data\n");
             return -1;
@@ -265,7 +264,7 @@ loop:
         /* delay 10ms for the I2C write is done */
         usleep(10 * 1000);
     } else {
-        ret = i2c_master_read(i2c_dev, slave, wr_buf,
+        ret = i2c_controller_read(i2c_dev, target, wr_buf,
                               rd_buf, bytes);
         if (ret == -1) {
             log_printf(LOG_ERROR, "Fail to read data\n");
@@ -315,7 +314,7 @@ int bsd_eeprom_handler (nvparm_ctrl_t *ctrl)
         ctrl->i2c_bus = DEFAULT_I2C_BUS;
     }
     if (ctrl->options[OPTION_S] == 0) {
-        ctrl->slave_addr = DEFAULT_I2C_EEPROM_ADDR;
+        ctrl->target_addr = DEFAULT_I2C_EEPROM_ADDR;
     }
     /* Create the device file string */
     ret = snprintf(i2cdev, sizeof(i2cdev), "/dev/i2c-%d", ctrl->i2c_bus);
@@ -325,14 +324,14 @@ int bsd_eeprom_handler (nvparm_ctrl_t *ctrl)
     }
 
     /* Try to probe the EEPROM */
-    if (detect_eeprom(i2cdev, ctrl->slave_addr)) {
+    if (detect_eeprom(i2cdev, ctrl->target_addr)) {
         log_printf(LOG_ERROR, "I2C device NOT FOUND!\n");
         ret = EXIT_FAILURE;
         goto out_hdl;
     }
 
     /* Read NVP header */
-    sz = eeprom_rd_wr(i2cdev, ctrl->slave_addr, offset, (uint8_t *)&header,
+    sz = eeprom_rd_wr(i2cdev, ctrl->target_addr, offset, (uint8_t *)&header,
                       sizeof(struct nvp_header) - BSD_NVP_HEADER_ADJUST,
                       EEPROM_RD_FLG);
     if (sz == -1) {
@@ -354,7 +353,7 @@ int bsd_eeprom_handler (nvparm_ctrl_t *ctrl)
         ret = EXIT_FAILURE;
         goto out_hdl;
     }
-    sz = eeprom_rd_wr(i2cdev, ctrl->slave_addr, 0x00, data_cs,
+    sz = eeprom_rd_wr(i2cdev, ctrl->target_addr, 0x00, data_cs,
                       header.length, EEPROM_RD_FLG);
     if (sz == -1) {
         log_printf(LOG_ERROR, "ERROR in read nvpberly file\n");
@@ -388,7 +387,7 @@ int bsd_eeprom_handler (nvparm_ctrl_t *ctrl)
          * NVPBERLY is special structure which includes BSV data also.
          * So dump data from offset 0x00
          */
-        sz = eeprom_rd_wr(i2cdev, ctrl->slave_addr,
+        sz = eeprom_rd_wr(i2cdev, ctrl->target_addr,
                           0, buff,
                           header.length, EEPROM_RD_FLG);
         if (sz == -1 || sz != header.length) {
@@ -442,7 +441,7 @@ int bsd_eeprom_handler (nvparm_ctrl_t *ctrl)
         fread(buff, sz, 1, fp);
 
         /* The NVPBERLY file includes BSV data so offset is 0x00 */
-        bytes = eeprom_rd_wr(i2cdev, ctrl->slave_addr,
+        bytes = eeprom_rd_wr(i2cdev, ctrl->target_addr,
                           0, buff,
                           sz, EEPROM_WR_FLG);
         if (bytes == -1 || sz != bytes) {
@@ -466,7 +465,7 @@ int bsd_eeprom_handler (nvparm_ctrl_t *ctrl)
     memset(val_bit_arr, 0, val_bit_arr_sz);
     /* Calculate offset of nvp valid bit array */
     offset = BSD_OFFSET + sizeof(header) - BSD_NVP_HEADER_ADJUST;
-    sz = eeprom_rd_wr(i2cdev, ctrl->slave_addr,
+    sz = eeprom_rd_wr(i2cdev, ctrl->target_addr,
                       offset, val_bit_arr,
                       val_bit_arr_sz, EEPROM_RD_FLG);
     if (sz == -1) {
@@ -491,7 +490,7 @@ int bsd_eeprom_handler (nvparm_ctrl_t *ctrl)
         /* Calculate offset of nvp field */
         offset = header.data_offset +
                  ctrl->field_index * header.field_size;
-        sz = eeprom_rd_wr(i2cdev, ctrl->slave_addr,
+        sz = eeprom_rd_wr(i2cdev, ctrl->target_addr,
                           offset, (uint8_t *)&nvp_value,
                           header.field_size, EEPROM_RD_FLG);
         if (sz == -1) {
@@ -528,7 +527,7 @@ int bsd_eeprom_handler (nvparm_ctrl_t *ctrl)
         /* Write new data */
         offset = header.data_offset +
                  ctrl->field_index * header.field_size;
-        sz = eeprom_rd_wr(i2cdev, ctrl->slave_addr, offset,
+        sz = eeprom_rd_wr(i2cdev, ctrl->target_addr, offset,
                           (uint8_t *)&(ctrl->nvp_data),
                           header.field_size, EEPROM_WR_FLG);
         if (sz == -1) {
@@ -553,7 +552,7 @@ int bsd_eeprom_handler (nvparm_ctrl_t *ctrl)
             UINT8_SET_BIT(val_bit_arr, ctrl->field_index);
         }
         offset = BSD_OFFSET + sizeof(header) - BSD_NVP_HEADER_ADJUST;
-        sz = eeprom_rd_wr(i2cdev, ctrl->slave_addr, offset, val_bit_arr,
+        sz = eeprom_rd_wr(i2cdev, ctrl->target_addr, offset, val_bit_arr,
                           val_bit_arr_sz, EEPROM_WR_FLG);
         if (sz == -1) {
             log_printf(LOG_ERROR, "ERROR in write NVP valid bit.\n");
@@ -573,7 +572,7 @@ int bsd_eeprom_handler (nvparm_ctrl_t *ctrl)
             goto out_val_arr;
         }
         offset = BSD_OFFSET + sizeof(header) - BSD_NVP_HEADER_ADJUST;
-        sz = eeprom_rd_wr(i2cdev, ctrl->slave_addr, offset, val_bit_arr,
+        sz = eeprom_rd_wr(i2cdev, ctrl->target_addr, offset, val_bit_arr,
                           val_bit_arr_sz, EEPROM_WR_FLG);
         if (sz == -1) {
             log_printf(LOG_ERROR, "ERROR in write NVP valid bit.\n");
@@ -586,7 +585,7 @@ int bsd_eeprom_handler (nvparm_ctrl_t *ctrl)
         nvp_value = ULLONG_MAX;
         offset = header.data_offset +
                  ctrl->field_index * header.field_size;
-        sz = eeprom_rd_wr(i2cdev, ctrl->slave_addr, offset,
+        sz = eeprom_rd_wr(i2cdev, ctrl->target_addr, offset,
                           (uint8_t *)&(nvp_value),
                           header.field_size, EEPROM_WR_FLG);
         if (sz == -1) {
@@ -597,7 +596,7 @@ int bsd_eeprom_handler (nvparm_ctrl_t *ctrl)
         /* Set the associated valid bit of NVP field to 0 */
         UINT8_CLEAR_BIT(val_bit_arr, ctrl->field_index);
         offset = BSD_OFFSET + sizeof(header) - BSD_NVP_HEADER_ADJUST;
-        sz = eeprom_rd_wr(i2cdev, ctrl->slave_addr, offset, val_bit_arr,
+        sz = eeprom_rd_wr(i2cdev, ctrl->target_addr, offset, val_bit_arr,
                           val_bit_arr_sz, EEPROM_WR_FLG);
         if (sz == -1) {
             log_printf(LOG_ERROR, "ERROR in write NVP valid bit.\n");
@@ -614,7 +613,7 @@ int bsd_eeprom_handler (nvparm_ctrl_t *ctrl)
     log_printf(LOG_DEBUG, "\n");
     #endif
     if (need_update_cs) {
-        sz = eeprom_rd_wr(i2cdev, ctrl->slave_addr, 0x00, data_cs,
+        sz = eeprom_rd_wr(i2cdev, ctrl->target_addr, 0x00, data_cs,
                     header.length, EEPROM_RD_FLG);
         if (sz == -1) {
             log_printf(LOG_ERROR, "ERROR in read nvpberly file\n");
@@ -629,7 +628,7 @@ int bsd_eeprom_handler (nvparm_ctrl_t *ctrl)
             checksum = calculate_sum8(data_cs, header.length);
         }
         /* Update new checksum */
-        sz = eeprom_rd_wr(i2cdev, ctrl->slave_addr, BSD_CHECKSUM_OFFSET,
+        sz = eeprom_rd_wr(i2cdev, ctrl->target_addr, BSD_CHECKSUM_OFFSET,
                           &checksum, sizeof(checksum), EEPROM_WR_FLG);
         if (sz == -1) {
             log_printf(LOG_ERROR, "ERROR in update new checksum.\n");

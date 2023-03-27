@@ -1,10 +1,13 @@
 TARGET = nvparm
-TARGET_LIB = nvparm.a
 
 GCC = $(CROSS_COMPILE)gcc
 STRIP =$(CROSS_COMPILE)strip
 
-SRC += $(wildcard *.c littlefs/*.c)
+TOPDIR = ..
+LIBDIR = $(TOPDIR)/lib
+INCDIR = $(TOPDIR)/include
+
+SRC += $(wildcard *.c)
 OBJ := $(SRC:.c=.o)
 DEP := $(SRC:.c=.d)
 
@@ -14,7 +17,7 @@ else
 override CFLAGS += -Os
 endif
 
-override CFLAGS += -I. -Ilittlefs
+override CFLAGS += -I. -I$(INCDIR)
 override CFLAGS += -std=c99 -Wall -pedantic
 override CFLAGS += -Wextra -Wshadow -Wjump-misses-init -Wundef
 # Remove missing-field-initializers because of GCC bug
@@ -33,7 +36,9 @@ override CFLAGS += --sysroot=$(SYSROOT)
 endif
 endif
 
-all: $(TARGET) $(TARGET_LIB)
+override LFLAGS += -L$(LIBDIR)/libspinorfs -lspinorfs
+
+all: $(TARGET)
 
 -include $(DEP)
 
@@ -48,9 +53,6 @@ endif
 
 %.o: %.c
 	$(GCC) -c -MMD $(CFLAGS) $< -o $@
-
-$(TARGET_LIB): $(OBJ)
-	$(AR) rcs $@ $^
 
 clean:
 	rm -f $(TARGET)

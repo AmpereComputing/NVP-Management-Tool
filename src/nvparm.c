@@ -1,14 +1,13 @@
 /**
  *
- * Copyright (c) 2021, Ampere Computing LLC
+ * Copyright (c) 2023, Ampere Computing LLC
  *
- *  This program and the accompanying materials
- *  are licensed and made available under the terms and conditions of the BSD License
- *  which accompanies this distribution.  The full text of the license may be found at
- *  http://opensource.org/licenses/bsd-license.php
+ * This program and the accompanying materials are licensed and made available under the terms
+ * and conditions of the BSD-3-Clause License which accompanies this distribution. The full text of the
+ * license may be found within the LICENSE file at the root of this distribution or online at
+ * https://opensource.org/license/bsd-3-clause/
  *
- *  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+ * SPDX-License-Identifier: BSD-3-Clause
  *
  * nvparm is an engineering tool running on the BMC Linux console.
  * nvparm enables users to edit NVPARAM fields of Validation NVPARAM and
@@ -34,7 +33,7 @@
 #include "version.h"
 #include "utils.h"
 #include "bsd_eeprom_nvp.h"
-#include "spinor_nvp.h"
+#include "hostfw_nvp.h"
 
 /* Option string of this application */
 #define OPTION_STRING   "t:u:f:i:rew:v:d:b:s:o:D:phV"
@@ -69,7 +68,7 @@ static void help (void)
         "  -d <raw_file>    : Dump specific NVP file into raw file.\n"
         "  -o <new_nvp_file>: New NVP file.\n"
         "  -b <i2c_bus>     : The I2C bus number. Default is 10 (I2C11).\n"
-        "  -s <slave_addr>  : The slave address of the EEPROM. Default is 0x50.\n"
+        "  -s <target_addr>  : The target address of the EEPROM. Default is 0x50.\n"
         "  -p               : Print GPT header. NVP partition names and GUIDs will be displayed.\n"
         "  -V               : Show version information.\n"
         "  -D <device>      : The MTD partition path\n"
@@ -98,7 +97,7 @@ static int parse_opt (int argc, char** argv)
     char *input_dump = NULL;
     char *input_upload = NULL;
     char *input_i2c_bus = NULL;
-    char *input_slave = NULL;
+    char *input_target = NULL;
     char *endptr = NULL; // Store the location where conversion stopped
     char *device_name= NULL;
 
@@ -334,31 +333,31 @@ static int parse_opt (int argc, char** argv)
             break;
         case 's':
             nvparm_ctrl.options[OPTION_S] = 1;
-            if (input_slave) {
-                free(input_slave);
-                input_slave = NULL;
+            if (input_target) {
+                free(input_target);
+                input_target = NULL;
             }
-            input_slave = strdup(optarg);
-            if (!input_slave) {
+            input_target = strdup(optarg);
+            if (!input_target) {
                 log_printf(LOG_ERROR, "Option -s: malloc failure\n");
                 ret = EXIT_FAILURE;
             } else {
-                input = strtoul(input_slave, &endptr, 16);
-                if (input_slave == endptr) { // e.g. "qabc"
+                input = strtoul(input_target, &endptr, 16);
+                if (input_target == endptr) { // e.g. "qabc"
                     log_printf(LOG_ERROR, "No conversion for wrong input %s\n",
-                               input_slave);
+                               input_target);
                     ret = EXIT_FAILURE;
                 } else if ((input == ULONG_MAX) && (errno == ERANGE)) {
                     log_printf(LOG_ERROR, "Input %s is %s\n",
-                               input_slave,
+                               input_target,
                             strerror(errno));
                     ret = EXIT_FAILURE;
                 } else if (*endptr) { // e.g. "0x7Fz"
                     log_printf(LOG_ERROR, "Extra text after number %s\n",
-                               input_slave);
+                               input_target);
                     ret = EXIT_FAILURE;
                 } else {
-                    nvparm_ctrl.slave_addr = (uint8_t)input;
+                    nvparm_ctrl.target_addr = (uint8_t)input;
                 }
             }
             break;
@@ -453,9 +452,9 @@ static int parse_opt (int argc, char** argv)
         free(input_i2c_bus);
         input_i2c_bus = NULL;
     }
-    if (input_slave) {
-        free(input_slave);
-        input_slave = NULL;
+    if (input_target) {
+        free(input_target);
+        input_target = NULL;
     }
     if (device_name) {
         free(device_name);

@@ -1,14 +1,13 @@
 /**
  *
- * Copyright (c) 2021, Ampere Computing LLC
+ * Copyright (c) 2023, Ampere Computing LLC
  *
- *  This program and the accompanying materials
- *  are licensed and made available under the terms and conditions of the BSD License
- *  which accompanies this distribution.  The full text of the license may be found at
- *  http://opensource.org/licenses/bsd-license.php
+ * This program and the accompanying materials are licensed and made available under the terms
+ * and conditions of the BSD-3-Clause License which accompanies this distribution. The full text of the
+ * license may be found within the LICENSE file at the root of this distribution or online at
+ * https://opensource.org/license/bsd-3-clause/
  *
- *  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+ * SPDX-License-Identifier: BSD-3-Clause
  *
  **/
 
@@ -32,6 +31,9 @@
 
 #define EXIT_FAILURE                        1
 #define EXIT_SUCCESS                        0
+
+#define SHOW_GPT_DISABLE                    0
+#define SHOW_GPT_ENABLE                     1
 
 #define MAX_NAME_LENGTH                     128
 #define MAX_PART_NAME_LEN                   72
@@ -134,7 +136,7 @@ typedef struct nvparm_ctrl {
     char dump_file[MAX_NAME_LENGTH];
     char upload_file[MAX_NAME_LENGTH];
     uint8_t i2c_bus;
-    uint8_t slave_addr;
+    uint8_t target_addr;
 } nvparm_ctrl_t;
 
 extern void log_printf (int level, const char *fmt, ...);
