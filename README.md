@@ -1,19 +1,19 @@
 # Ampere Computing NVP Management Tool
 
 The Ampere Computing NVP Management Tool (nvparm) is an engineering tool
-that runs on the BMC console and enables users to edit Dynamic NVPARAM
-fields within the AmpereOne Host SPI-NOR and Boot Strap Data (BSD) EEPROM devices.
+that runs on the BMC console and enables users to edit NVPARAM fields of
+Dynamic NVPARAM, and Static NVPARAM partitions on the host SPI-NOR device.
 
-The Ampere Computing NVP Management Tool currently supports the follow Ampere Computing products:
-- AmpereOne
+The Ampere Computing NVP Management Tool currently supports AmpereOne Family 
+products.
 
 Users can use nvparm tool to:
 
 - Read an NVPARAM field individually and its associated valid bit
-  from an NVP file of Dynamic or Static NVPARAM or BSD partitions.
+  from an NVP file of Dynamic or Static NVPARAM partitions.
 
 - Write NVPARAM data to a field individually in a NVP file of Dynamic or
-  Static NVPARAM or BSD partitions.
+  Static NVPARAM partitions.
 
 - Enable or disable the valid bit of an NVPARAM field in an NPV file.
 
@@ -74,48 +74,6 @@ Write content of new_nvp_file to nvp_file.
 
 ```text
 # nvparm [-D <device>] -t <nvp_part> -f <nvp_file> -o <new_nvp_file>
-```
-
-Read an EEPROM field and its associated valid bit.
-
-```text
-# nvparm -t nvparamb -b <i2c_bus> -s <target_addr> -f <nvp_file> -i <field_index> -r
-```
-
-Enable or disable the valid bit of an EEPROM field_index.
-
-```text
-# nvparm -t nvparamb -b <i2c_bus> -s <target_addr> -f <nvp_file> -i <field_index> -v <valid_bit>
-```
-
-Write data to an EEPROM field and its associated valid bit at field_index.
-
-```text
-# nvparm -t nvparamb -b <i2c_bus> -s <target_addr> -f <nvp_file> -i <field_index> -v <valid_bit> -w <nvp_data>
-```
-
-Write data to an EEPROM field at field_index. The valid bit is enabled by default.
-
-```text
-# nvparm -t nvparamb -b <i2c_bus> -s <target_addr> -f <nvp_file> -i <field_index> -w <nvp_data>
-```
-
-Erase an EEPROM field at field_index.
-
-```text
-# nvparm -t nvparamb -b <i2c_bus> -s <target_addr> -f <nvp_file> -i <field_index> -e
-```
-
-Dump the Boot Strap Data NVP EEPROM file into raw file
-
-```text
-# nvparm -t nvparamb -b <i2c_bus> -s <target_addr> -f <nvp_file> -d <raw_file>
-```
-
-Write content of new_nvp_file to nvp_file.
-
-```text
-# nvparm -t nvparamb -b <i2c_bus> -s <target_addr> -f <nvp_file> -o <new_nvp_file>
 ```
 
 Print GPT header. NVP partition names and GUIDs are displayed with this option.
@@ -186,60 +144,17 @@ nvp_guid. The valid bit is enabled by default.
     # nvparm [-D <device>] -u <nvp_guid> -f <nvp_file> -o <new_nvp_file>
     ```
 
-  - Read an EEPROM field and its associated valid bit.
-
-    ```text
-    # nvparm -u 0 -b <i2c_bus> -s <target_addr> -f <nvp_file> -i <field_index> -r
-    ```
-
-  - Enable or disable the valid bit of an EEPROM field_index.
-
-    ```text
-    # nvparm -u 0 -b <i2c_bus> -s <target_addr> -f <nvp_file> -i <field_index> -v <valid_bit>
-    ```
-
-  - Write data to an EEPROM field and its associated valid bit at field_index.
-
-    ```text
-    # nvparm -u 0 -b <i2c_bus> -s <target_addr> -f <nvp_file> -i <field_index> -v <valid_bit> -w <nvp_data>
-    ```
-
-  - Write data to an EEPROM field at field_index. The valid bit is enabled by default.
-
-    ```text
-    # nvparm -u 0 -b <i2c_bus> -s <target_addr> -f <nvp_file> -i <field_index> -w <nvp_data>
-    ```
-
-  - Erase an EEPROM field at field_index.
-
-    ```text
-    # nvparm -u 0 -b <i2c_bus> -s <target_addr> -f <nvp_file> -i <field_index> -e
-    ```
-
-  - Dump the Boot Strap Data NVP EEPROM file into raw file
-
-    ```text
-    # nvparm -u 0 -b <i2c_bus> -s <target_addr> -f <nvp_file> -d <raw_file>
-    ```
-
-  - Write content of new_nvp_file to nvp_file.
-
-    ```text
-    # nvparm -u 0 -b <i2c_bus> -s <target_addr> -f <nvp_file> -o <new_nvp_file>
-    ```
-
 ## Arguments
 
 - nvp_part: Partition name of Dynamic NVPARAM or Static NVPARAM.
-  Users can get partition names with option -p. Specially,
-  nvparamb is the fixed partition name for Boot Strap Data partition.
+  Users can get partition names with option -p.
 
 - nvp_guid: Partition’s GUID from the GPT header. Users can use either nvp_guid
-  or nvp_part option but not both at a time. Specially, 0 is the fixed partition
-  GUID for Boot Strap Data partition.
+  or nvp_part option but not both at a time.
 
-- nvp_file: Name of NVP file. Specially, NVPBERLY is the fixed nvp file for
-  Boot Strap Data partition.
+- nvp_file: Name of NVP file. The nvparm tool works on the root directory (/)
+  of the NVPARAM partition (specified by nvp_part). Therefore, users must use
+  the file's absolute path.
 
 - new_nvp_file: Name of new NVP file (include path).
 
@@ -254,10 +169,6 @@ nvp_guid. The valid bit is enabled by default.
 
   - 0x1: the field is enabled.
 
-- i2c_bus: The I2C bus number. Default is 10 (I2C11)
-
-- target_addr: The target address of the EEPROM. Default is 0x50
-
 - device: Specify the MTD partition e.g. /dev/mtd12
 
 ## Notes
@@ -266,8 +177,8 @@ Updating NVPS (Static) values may conflict with Platform Secure Boot signing.
 The Static NVP partitions (NVPS) are signed as part of platform secure boot,
 and modifying them at runtime may prevent the system from rebooting correctly.
 
-Users must do the following steps before using nvparm tool on Mt.Mitchell.
-Set the GPIOs correctly to access the right SPI-NOR/EEPROM via the MUX.
+Users must do the following steps before using nvparm tool on Mt.Mitchell/Mt.Jefferson.
+Set the GPIOs correctly to access the right SPI-NOR via the MUX.
 
 Select the MUX:
 
@@ -478,4 +389,36 @@ Reset GPIO settings to default values.
     # nvparm -t nvpd -u 44E342FA-21F6-4299-B712-71F083BDE48C -f nvpdddr0.nvp -i 0 -e
     Mixing -t and -u options is not allowed!
     EXIT!
+    ```
+
+8. Using nvparm to read/write an NVPARAM field with Ampere Computing products.
+
+- AmpereOne® (ac03):
+
+    ```text
+    ~ # nvparm -t nvpd -f /nvpdddr0.nvp -i 0 -r
+    0x00 0x00000000
+    ~ # nvparm -t nvpd -f /nvpdddr0.nvp -i 0 -w 0x00000001
+    ~ # nvparm -t nvpd -f /nvpdddr0.nvp -i 0 -r
+    0x01 0x00000001
+    ```
+
+- AmpereOne® X (ac04):
+
+    ```text
+    ~ # nvparm -t nvpd -f /ac04/nvpdddr0.nvp -i 0 -r
+    0x00 0x00000000
+    ~ # nvparm -t nvpd -f /ac04/nvpdddr0.nvp -i 0 -w 0x00000001
+    ~ # nvparm -t nvpd -f /ac04/nvpdddr0.nvp -i 0 -r
+    0x01 0x00000001
+    ```
+
+- AmpereOne® M (ac04_1):
+
+    ```text
+    ~ # nvparm -t nvpd -f /ac04_1/nvpdddr0.nvp -i 0 -r
+    0x00 0x00000000
+    ~ # nvparm -t nvpd -f /ac04_1/nvpdddr0.nvp -i 0 -w 0x00000001
+    ~ # nvparm -t nvpd -f /ac04_1/nvpdddr0.nvp -i 0 -r
+    0x01 0x00000001
     ```
